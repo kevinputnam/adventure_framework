@@ -1,0 +1,19 @@
+name: Horseman of something
+id: 1
+description: Smiling skull for a head. He isn't jolly and doesn't like being called Roger. He'll kill you as much as look at you.
+location: [0,2]
+attacks:
+  sword:
+    type: weapon
+    damage: [1,6]
+    save: dodge
+    actionCost: 1
+    toHit: 5
+  lifeSteal:
+    type: magic
+    description: You feel your life force ebbing in his presence.
+    damage: [-3]
+    save: null
+    effects: null
+    actionCost: 0
+    toHit: null

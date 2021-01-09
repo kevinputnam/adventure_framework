@@ -1,0 +1,5 @@
+name : Test Adventure
+quest : Your mission, should you decide to accept it, is to find all the keys and unlock all the locks.
+sections: ['forest']
+npcs: ['horseman']
+start: [0,0]

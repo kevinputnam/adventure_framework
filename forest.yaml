@@ -1,0 +1,50 @@
+name: Forest
+id: 0
+map: file.jpg
+locations:
+    - id: 0
+      name: a clearing
+      description: The sky glows above and it smells of earth and living things.
+      things:
+        - id: 0
+          name: stones
+          description: You could probably build a cairn with them.
+          canTake: Yes
+        - id: 1
+          name: Path to hill
+          description: It's a steep climb, but you can probably make it.
+          goesTo: 1
+    - id: 1
+      name: the Hilltop
+      description: You can see for miles from here.
+      things:
+        - id: 3
+          name: Path down hill
+          description: It's a steep descent, but you can probably make it.
+          goesTo: 0
+        - id: 4
+          name: Path deeper into Forest
+          description: It seems dark in there.
+          goesTo: 2
+        - id: 6
+          name: big stone
+          description: It's heavy, but you might be able to move it.
+          interactions :
+            move:
+              interacted : No
+              action : You barely move the stone, revealing a key.
+              requires : null
+              effects : [[7,'set',['hidden',No]]]
+        - id: 7
+          name: key
+          description: An old, rusty skeleton key that might go to a tower door.
+          hidden: Yes
+          canTake: Yes
+    - id: 2
+      name: the deep forest
+      description: The massive trunks of trees obscure your vision in every direction.
+      things:
+        - id: 5
+          name: Narrow path
+          description: It leads between the trees to an uncertain destiny.
+          goesTo: 1
