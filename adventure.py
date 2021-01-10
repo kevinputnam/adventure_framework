@@ -204,15 +204,14 @@ class Adventure:
             character.setTalkPrompt(prompt,response,effects)
 
     def talk(self, thing, selection):
-        prompts = thing.getPrompts()
-        prompt = thing.getPromptResponse(prompts[selection])
+        prompt = thing.getPromptResponse(selection)
         output = prompt['response']
         if 'effects' in prompt:
             for e in prompt['effects']:
                 method = e[0]
                 args = e[1]
                 getattr(self,method)(*args)
-        thing.removePrompt(prompts[selection])
+        thing.removePrompt(selection)
         return output
 
     def attack(self,attacker,defender):

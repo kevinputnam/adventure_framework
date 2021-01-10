@@ -18,6 +18,7 @@ class Thing:
         if not self.name or not self.description:
             print("name and description attributes must be set.")
             print(attributes)
+        self.promptList = []
 
     def set(self, attrName, attrValue):
         setattr(self,attrName,attrValue)
@@ -37,16 +38,19 @@ class Thing:
         self.talkPrompts[prompt]['effects']=effects
 
     def getPrompts(self):
-        promptList = []
+        self.promptList = []
         for prompt in self.talkPrompts:
-            promptList.append(prompt)
-        return promptList
+            self.promptList.append(prompt)
+        return self.promptList
 
-    def getPromptResponse(self,prompt):
+    def getPromptResponse(self,selection):
+        prompt = self.promptList[selection]
         return self.talkPrompts[prompt]
 
-    def removePrompt(self,prompt):
+    def removePrompt(self,selection):
+        prompt = self.promptList[selection]
         del self.talkPrompts[prompt]
+        self.getPrompts()
 
     def getStatus(self):
         return "Nothing much to report here."
