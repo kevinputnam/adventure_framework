@@ -101,7 +101,8 @@ class Adventure:
 
     def getLocalDescription(self):
         self.getNouns()
-        description = "You are at " + self.currentLocation.name + ": "
+        description = "** " + self.currentSectionName + " **\n"
+        description += "You are at " + self.currentLocation.name + ": "
         description += self.currentLocation.description + "\n\n"
         description += "You see: \n**********************************\n"
         for thingID in self.currentNouns:
