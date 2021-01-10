@@ -13,7 +13,7 @@ locations:
         - id: 2
           name: Path to hill
           description: It's a steep climb, but you can probably make it.
-          goesTo: 1
+          goesTo: [1]
         - id: 13
           name: Sign
           description: It says something in a strange language.
@@ -31,11 +31,11 @@ locations:
         - id: 3
           name: Path down hill
           description: It's a steep descent, but you can probably make it.
-          goesTo: 0
+          goesTo: [0]
         - id: 4
           name: Path deeper into Forest
           description: It seems dark in there.
-          goesTo: 2
+          goesTo: [2]
         - id: 6
           name: big stone
           description: It's heavy, but you might be able to move it.
@@ -57,4 +57,4 @@ locations:
         - id: 5
           name: Narrow path
           description: It leads between the trees to an uncertain destiny.
-          goesTo: 1
+          goesTo: [1]

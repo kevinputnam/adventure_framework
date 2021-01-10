@@ -9,15 +9,17 @@ if len(argv) == 1:
 elif len(argv) == 2:
     path = dirname(argv[1])
     fileName = basename(argv[1])
-    print(path)
-    print(fileName)
 else:
     print("Takes 0 or 1 args:")
     print("1. path to adventure file")
     exit()
 
 ad = Adventure(path,fileName)
+print("*******************************************************")
+print("* " + ad.name)
+print("*******************************************************")
 print(ad.getQuest())
+print("*******************************************************")
 
 while ad.running:
     print(ad.getLocalDescription())
@@ -46,7 +48,7 @@ while ad.running:
         ad.quit()
     elif verb == 'g':
         if not thing.goesTo == None:
-            ad.goToLocation([thing.goesTo])
+            ad.goToLocation(thing.goesTo)
     elif verb == 'l':
         if thing:
             print(thing.description)
