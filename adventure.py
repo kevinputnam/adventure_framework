@@ -5,7 +5,7 @@ except ImportError:
     from yaml import Loader, Dumper
 
 from random import randint
-from os.path import isfile
+from os.path import isfile, join
 from thing import Thing
 from character import Character
 
@@ -28,9 +28,11 @@ class Location:
 
 class Adventure:
 
-    def __init__(self,path):
+    def __init__(self,path,fileName):
+        self.path = path
+        fullPath = join(path,fileName)
         self.running = True
-        self.data = self.load(path)
+        self.data = self.load(fullPath)
         self.name = self.data["name"]
         self.quest = self.data["quest"]
         self.currentNouns = {}
@@ -48,8 +50,9 @@ class Adventure:
     def getFileContent(self,fileName):
         fileType = ".yaml"
         fName = fileName + fileType
-        if isfile(fName):
-            with open (fName,'r') as contentFile:
+        fPath = join(self.path,fName)
+        if isfile(fPath):
+            with open (fPath,'r') as contentFile:
                 rawData =  load(contentFile, Loader=Loader)
                 return rawData
         return None

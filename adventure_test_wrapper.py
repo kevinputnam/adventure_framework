@@ -1,7 +1,8 @@
 from adventure import Adventure
 from termcolor import colored
 
-ad = Adventure('testAdventure.yaml')
+path = "testing"
+ad = Adventure(path,'testAdventure.yaml')
 print(ad.getQuest())
 
 while ad.running:
