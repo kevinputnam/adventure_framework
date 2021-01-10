@@ -4,6 +4,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
+from random import randint
 from os.path import isfile
 from thing import Thing
 from character import Character
@@ -28,16 +29,21 @@ class Location:
 class Adventure:
 
     def __init__(self,path):
+        self.running = True
         self.data = self.load(path)
         self.name = self.data["name"]
         self.quest = self.data["quest"]
         self.currentNouns = {}
         self.sectionData = {}
         self.npcs = {}
-        self.player = Character({'name':'Kevin','description':'Looking for the end of the circle.','location':self.data['start'],'id':0})
+        self.player = Character(self.data["player"])
         self.loadSections()
         self.loadNPCs()
         self.goToLocation(self.data["start"])
+
+    def getQuest(self):
+        output = self.quest
+        return output
 
     def getFileContent(self,fileName):
         fileType = ".yaml"
@@ -91,6 +97,7 @@ class Adventure:
         self.getNouns()
 
     def getLocalDescription(self):
+        self.getNouns()
         description = "You are at " + self.currentLocation.name + ": "
         description += self.currentLocation.description + "\n\n"
         description += "You see: \n**********************************\n"
@@ -102,7 +109,7 @@ class Adventure:
     def listInteractions(self, thing):
         output = "No interactions available."
         interactions = thing.getInteractions()
-        if len(interactions) >= 1:
+        if len(interactions) > 0:
             output = "Choose one: \n\n"
             for interaction in interactions:
                 output += "* " + interaction + "\n"
@@ -119,12 +126,13 @@ class Adventure:
                     req = i['requires']
                     if req[0] == 'inventory':
                         if not req[1] in self.player.inventory:
-                            print(i['requiresFail'])
-                            return
+                            return i['requiresFail']
                     elif req[0] == 'ability':
-                        print('Abilities not implemented - requires name of ability and value')
+                        output = 'Abilities not implemented - requires name of ability and value'
+                        return
                     elif req[0] == 'skill':
-                        print('Skills not implemented - requires name of skill and value')
+                        if not req[1] in self.player.skills or self.player.skills[req[1]] < req[2]:
+                            return i['requiresFail']
                 if i['effects']:
                     for e in i['effects']:
                         ID = e[0]
@@ -150,15 +158,6 @@ class Adventure:
                 self.getNouns()
         return output
 
-    def put(self, thingID): #TODO
-        if thingID in self.player.inventory:
-            thing = self.player.inventory[thingID]
-            self.currentLocation.things[thingID] = thing
-            del self.player.inventory[thingID]
-            print("I put down the " + thing.name + ".")
-        else:
-            print("I don't have that.")
-
     def save(self, path,settings):
         with open(path,'w') as outFile:
             output = dump(settings, Dumper=Dumper)
@@ -171,34 +170,85 @@ class Adventure:
                 adventure = load(yamlFile, Loader=Loader)
         return adventure
 
-# NOT CURRENTLY IN USE
+    def listInventory(self, character):
+        output = "Nothing in inventory."
+        inventory = character.getInventory()
+        if len(inventory) > 0:
+            output = character.name + " inventory: \n"
+            for thing in inventory:
+                output += str(thing.id) + " : " + thing.name + "\n"
+        return output
 
-    def changeLocation(self, choice):
-        newSection = False
-        self.previousLocationName = self.currentLocationName
-        nextLocation = self.currentSection["locations"][choice]
-        if "section" in nextLocation:
-            newSection = True
-            self.loadSection(nextLocation["section"])
-        else:
-            self.currentLocation = self.currentSection["locations"][choice]
-            self.currentLocationName = choice
-        return newSection
+    def putFromID(self,characterID,thingID):
+        output = "Who am I anyway?"
+        if characterID in self.npcs:
+            character = self.npcs[characterID]
+            output = self.putFromInventory(character,thingID)
+        return output
 
-        for sectionFileName in self.data["sections"]:
-            fileName = sectionFileName + fileType
-            if isfile(fileName):
-                with open (fileName,'r') as sectionFile:
-                    rawSection =  load(sectionFile, Loader=Loader)
-                    self.sectionData[section['id']]=rawSection
+    def putFromInventory(self,character,thingID):
+        output = "You don't have that."
+        if thingID in character.inventory:
+            thing = character.inventory[thingID]
+            self.currentLocation.things[thingID] = thing
+            del character.inventory[thingID]
+            output = "You put down the " + thing.name + "."
+        return output
 
-    def getChoices(self):
-        return self.currentLocation["goto"]
+    def listStatus(self,thing):
+        return thing.getStatus()
 
-    def getEncounters(self):
-        encounters = []
-        if "encounters" in self.currentLocation:
-            for key, encounter in self.currentLocation["encounters"].items():
-                if encounter["resolved"] == "":
-                    encounters.append(key)
-        return encounters
+    def addTalkPrompt(self,characterID,prompt,response,effects):
+        if characterID in self.npcs:
+            character = self.npcs[characterID]
+            character.setTalkPrompt(prompt,response,effects)
+
+    def talk(self, thing, selection):
+        prompts = thing.getPrompts()
+        prompt = thing.getPromptResponse(prompts[selection])
+        output = prompt['response']
+        if 'effects' in prompt:
+            for e in prompt['effects']:
+                method = e[0]
+                args = e[1]
+                getattr(self,method)(*args)
+        thing.removePrompt(prompts[selection])
+        return output
+
+    def attack(self,attacker,defender):
+        defender.name + " doesn't seem interested in fighting."
+        if defender.fight:
+            actions = attacker.actions
+            damage = 0
+            output = ""
+            if actions > 0:
+                canAct = True
+            while canAct:
+                didSomething = False
+                for thingID in attacker.inventory:
+                    thing = attacker.inventory[thingID]
+                    if thing.isAttack:
+                        if thing.actionCost <= actions:
+                            didSomething = True
+                            attackRoll = randint(1, 10)
+                            actions -= thing.actionCost
+                            output += attacker.name + " attacks with " + thing.name + ". "
+                            if attackRoll >= thing.toHit:
+                                if len(thing.damage) == 1:
+                                    damageRoll = thing.damage[0]
+                                else:
+                                    damageRoll = randint(thing.damage[0],thing.damage[1])
+                                damage += damageRoll
+                                output += thing.name + " causes " + str(damageRoll) + " damage.\n"
+                            else:
+                                output += thing.name + " misses.\n"
+                if not didSomething or actions == 0:
+                    canAct = False
+            defender.hp -= damage
+            if defender.hp <= 0:
+                defender.alive = False
+        return output
+
+    def quit(self):
+        self.running = False
+

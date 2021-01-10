@@ -6,14 +6,24 @@ locations:
       name: a clearing
       description: The sky glows above and it smells of earth and living things.
       things:
-        - id: 0
+        - id: 1
           name: stones
           description: You could probably build a cairn with them.
           canTake: Yes
-        - id: 1
+        - id: 2
           name: Path to hill
           description: It's a steep climb, but you can probably make it.
           goesTo: 1
+        - id: 13
+          name: Sign
+          description: It says something in a strange language.
+          interactions:
+            read:
+              interacted: No
+              action: You decipher the elven script.
+              requires : ['skill','elven',2]
+              requiresFail : You can't read it, but it might be in elven (2).
+              effects : [[13,'set',['description','It says, "the grumpy horseman likes to talk."']]]
     - id: 1
       name: the Hilltop
       description: You can see for miles from here.

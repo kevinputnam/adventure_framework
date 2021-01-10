@@ -1,19 +1,42 @@
 name: Horseman of something
-id: 1
+id: 12
 description: Smiling skull for a head. He isn't jolly and doesn't like being called Roger. He'll kill you as much as look at you.
 location: [0,2]
-attacks:
-  sword:
+hp: 40
+actions: 2
+talkPrompts:
+  How are you? :
+    response : Hmph.
+  You are one scary looking dude. :
+    response : Grrr!
+  What is your name? :
+    response : No one ever asks me that. It's George.
+    effects : [['addTalkPrompt',[12,'Do you have any keys?','I do actually. Here.',[['putFromID',[12,8]]]]]]
+inventory:
+  8 :
+    id: 8
+    name: skeleton key
+    description: It looks like it is actually made of bone.
+    canTake: Yes
+  9 :
+    id : 9
+    name: short sword
     type: weapon
+    description: A soldier's weapon. It is simple, sharp. and deadly.
+    isAttack: Yes
     damage: [1,6]
     save: dodge
     actionCost: 1
     toHit: 5
-  lifeSteal:
-    type: magic
-    description: You feel your life force ebbing in his presence.
-    damage: [-3]
+    canTake: Yes
+  10:
+    id: 10
+    name: life steal
+    type: spell
+    description: You can feel your life force seeping from your body.
+    isAttack: Yes
+    damage: [3]
+    toHit: 0
     save: null
     effects: null
-    actionCost: 0
-    toHit: null
+    actionCost: 1

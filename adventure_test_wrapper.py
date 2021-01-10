@@ -2,10 +2,10 @@ from adventure import Adventure
 from termcolor import colored
 
 ad = Adventure('testAdventure.yaml')
-print(ad.getLocalDescription())
+print(ad.getQuest())
 
-running = True
-while running:
+while ad.running:
+    print(ad.getLocalDescription())
     action = input(colored(ad.player.name + " >> ",'red')).split()
 
     if len(action) == 0:
@@ -28,64 +28,79 @@ while running:
             continue
 
     if verb == 'q':
-        running = False
+        ad.quit()
     elif verb == 'g':
         if not thing.goesTo == None:
             ad.goToLocation([thing.goesTo])
-            print(ad.getLocalDescription())
     elif verb == 'l':
         if thing:
             print(thing.description)
-        else:
-            print(ad.getLocalDescription())
-    elif verb == 'i':
+    elif verb == 'a':
         if thing:
-            print(ad.listInteractions(thing))
-            choice = input(colored(ad.player.name + " >> ", 'red'))
-            print(ad.executeInteraction(thing, choice))
+            output = ad.listInteractions(thing)
+            print(output)
+            if "No" not in output:
+                choice = input(colored("Choose an interaction >> ", 'red'))
+                print(ad.executeInteraction(thing, choice))
+    elif verb == 'f':
+        if thing:
+            if thing.fight:
+                fighting = True
+                while fighting:
+                    print(ad.attack(ad.player,thing))
+                    print(ad.attack(thing,ad.player))
+                    print(ad.player.name + " has " + str(ad.player.hp) + "hp left.")
+                    if not ad.player.alive:
+                        print("You are dead. Welcome to the afterlife.")
+                        ad.quit()
+                        fighting = False
+                    elif not thing.alive:
+                        print("You have vanquished your foe. Congrats!")
+                        fighting = False
+                    else:
+                        choice = input(colored("Continue fighting(y/n) >> ",'red'))
+                        print(" ")
+                        if choice == 'n':
+                            print("Phew.")
+                            fighting = False
     elif verb == 't':
         if thing:
             print(ad.take(thing.id))
+    elif verb == 'p':
+        output = ad.listInventory(ad.player)
+        print(output)
+        if "No" not in output:
+            choice = input(colored("Enter ID of thing to put >> ", 'red'))
+            try:
+                invThingID = int(choice)
+            except:
+                invThingID = None
+            print(ad.putFromInventory(ad.player,invThingID))
+    elif verb == 'i':
+        print(ad.listInventory(ad.player))
+    elif verb == 's':
+        if thing:
+            print(ad.listStatus(thing))
+        else:
+            print(ad.listStatus(ad.player))
+    elif verb == 'talk':
+        if thing:
+            prompts = thing.getPrompts()
+            if len(prompts) > 0:
+                promptIndex = 0
+                for promptString in prompts:
+                    print(str(promptIndex) + ". " + promptString)
+                    promptIndex += 1
+                selection = input(colored("choice >> ", 'red'))
+                try:
+                    selection  = int(selection)
+                except:
+                    selection = 1024
+                if selection < promptIndex:
+                    print(ad.talk(thing,selection))
+                else:
+                    print("That's odd.")
+            else:
+                print("I'm not sure " + thing.name + " is interested in talking.")
 
-#     noun = None
-#     thing = None
-#     if len(action) > 1:
-#         noun = action[1].lower()
-#     if noun in self.currentLocation.things:
-#         thing = self.currentLocation.things[noun]
-#     elif noun in self.characters:
-#         character = self.characters[noun]
-#         if character.location == self.currentLocation.name:
-#             thing = character
-#     if verb == 'debug':
-#         print(self.characters)
-#     elif verb == 'l':
-#         if not noun:
-#             self.fullDescription()
-#         elif thing:
-#             thing.look()
-#     elif verb == 'm':
-#         if noun and thing:
-#             thing.interact("move",self.player.inventory,self.currentLocation.things)
-#     elif verb == 'o':
-#         if noun and thing:
-#             thing.interact("open",self.player.inventory,self.currentLocation.things)
-#     elif verb == 't':
-#         if noun and thing:
-#             game.take(noun)
-#     elif verb == 'p':
-#         if noun:
-#             game.put(noun)
-#     elif verb == 'i':
-#         printInventory(self.player)
-#     elif verb == 'g':
-#         if noun and thing:
-#             goTo = thing.go()
-#             if goTo:
-#                 self.goLocation(goTo)
-#                 self.fullDescription()
-#     elif verb == 'talk':
-#         if thing:
-#                 thing.talk()
-#     elif verb == 'q':
-#         self.running = False
+
