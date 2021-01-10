@@ -5,11 +5,11 @@ location: [0,2]
 hp: 40
 actions: 2
 talkPrompts:
-  How are you? :
+  - prompt : How are you?
     response : Hmph.
-  You are one scary looking dude. :
+  - prompt : You are one scary looking dude.
     response : Grrr!
-  What is your name? :
+  - prompt : What is your name?
     response : No one ever asks me that. It's George.
     effects : [['addTalkPrompt',[12,'Do you have any keys?','I do actually. Here.',[['putFromID',[12,8]]]]]]
 inventory:

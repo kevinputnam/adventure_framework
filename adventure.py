@@ -204,7 +204,7 @@ class Adventure:
             character.setTalkPrompt(prompt,response,effects)
 
     def talk(self, thing, selection):
-        prompt = thing.getPromptResponse(selection)
+        prompt = thing.getPrompt(selection)
         output = prompt['response']
         if 'effects' in prompt:
             for e in prompt['effects']:

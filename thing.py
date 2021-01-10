@@ -9,7 +9,7 @@ class Thing:
         self.goesTo = None
         self.isAttack = False
         self.fight = False
-        self.talkPrompts = {}
+        self.talkPrompts = []
         self.responses = []
         self.inventory = {}
         self.interactions = {}
@@ -18,7 +18,6 @@ class Thing:
         if not self.name or not self.description:
             print("name and description attributes must be set.")
             print(attributes)
-        self.promptList = []
 
     def set(self, attrName, attrValue):
         setattr(self,attrName,attrValue)
@@ -33,24 +32,20 @@ class Thing:
             return {}
 
     def setTalkPrompt(self,prompt,response,effects):
-        self.talkPrompts[prompt] = {}
-        self.talkPrompts[prompt]['response']=response
-        self.talkPrompts[prompt]['effects']=effects
+        tPrompt = {'prompt':prompt,'response':response,'effects':effects}
+        self.talkPrompts.append(tPrompt)
 
     def getPrompts(self):
-        self.promptList = []
-        for prompt in self.talkPrompts:
-            self.promptList.append(prompt)
-        return self.promptList
+        promptList = []
+        for item in self.talkPrompts:
+            promptList.append(item['prompt'])
+        return promptList
 
-    def getPromptResponse(self,selection):
-        prompt = self.promptList[selection]
-        return self.talkPrompts[prompt]
+    def getPrompt(self,selection):
+        return self.talkPrompts[selection]
 
     def removePrompt(self,selection):
-        prompt = self.promptList[selection]
-        del self.talkPrompts[prompt]
-        self.getPrompts()
+        del self.talkPrompts[selection]
 
     def getStatus(self):
         return "Nothing much to report here."
