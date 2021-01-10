@@ -1,8 +1,22 @@
 from adventure import Adventure
 from termcolor import colored
+from sys import argv
+from os.path import dirname, basename
 
-path = "testing"
-ad = Adventure(path,'testAdventure.yaml')
+if len(argv) == 1:
+    path = "testing"
+    fileName = "testAdventure.yaml"
+elif len(argv) == 2:
+    path = dirname(argv[1])
+    fileName = basename(argv[1])
+    print(path)
+    print(fileName)
+else:
+    print("Takes 0 or 1 args:")
+    print("1. path to adventure file")
+    exit()
+
+ad = Adventure(path,fileName)
 print(ad.getQuest())
 
 while ad.running:

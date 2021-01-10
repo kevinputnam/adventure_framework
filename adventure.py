@@ -30,9 +30,10 @@ class Adventure:
 
     def __init__(self,path,fileName):
         self.path = path
-        fullPath = join(path,fileName)
+        self.fileType = ".yaml"
+        fPath = join(path,fileName)
         self.running = True
-        self.data = self.load(fullPath)
+        self.data = self.load(fPath)
         self.name = self.data["name"]
         self.quest = self.data["quest"]
         self.currentNouns = {}
@@ -48,8 +49,7 @@ class Adventure:
         return output
 
     def getFileContent(self,fileName):
-        fileType = ".yaml"
-        fName = fileName + fileType
+        fName = fileName + self.fileType
         fPath = join(self.path,fName)
         if isfile(fPath):
             with open (fPath,'r') as contentFile:
