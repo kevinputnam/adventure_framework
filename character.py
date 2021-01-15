@@ -5,9 +5,13 @@ class Character(Thing):
     def __init__(self,attributes):
         self.hp = 10
         self.actions = 1
-        super().__init__(attributes)
         self.fight = True
         self.alive = True
+        self.abilities = {}
+        abilityList = ['strength','stamina','agility','reaction','intelligence','logic','personality','leadership']
+        for ability in abilityList:
+            self.abilities[ability] = 3
+        super().__init__(attributes)
         self.constructThings()
 
     def constructThings(self):
@@ -30,4 +34,11 @@ class Character(Thing):
             output += "Inventory:\n"
             for thingID in self.inventory:
                 output += "* " + self.inventory[thingID].name + "\n"
+        output += "Abilities:\n"
+        for ability in self.abilities:
+            output += "* " + ability + ": " + str(self.abilities[ability]) + "\n"
+        if len(self.skills) > 0:
+            output += "Skills:\n"
+            for skill in self.skills:
+                output += "* " + skill + ": " + str(self.skills[skill]) + "\n"
         return output
